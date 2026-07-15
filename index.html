@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Motor — teachable sensor-to-motor</title>
+<link rel="stylesheet" href="https://pyscript.net/releases/2026.3.1/core.css">
+<script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+<link rel="stylesheet" href="styles.css">
+<py-config src="./pyscript.toml"></py-config>
+</head>
+<body>
+
+<div id="loading-splash" class="loading-splash">
+  <div class="loading-orb"></div>
+  <span class="loading-label">Starting up…</span>
+</div>
+
+<div id="page-wrap" style="display:none">
+
+<header>
+  <h1>Smart Motor</h1>
+  <span class="muted">teachable sensor-to-motor</span>
+  <span class="status" id="connStatus">Not connected</span>
+</header>
+
+<div class="wrap">
+  <div class="col-controls">
+    <div class="card">
+      <h2>Hardware</h2>
+      <label class="row">Backend
+        <select id="backendSel"></select>
+      </label>
+      <label class="row" id="motorRow">Motor
+        <select id="motorSel">
+          <option>Single Motor</option><option>Double Motor</option>
+        </select>
+      </label>
+      <label class="row" id="sensorRow">Sensor
+        <select id="sensorSel">
+          <option>Color Sensor</option><option>Controller</option>
+        </select>
+      </label>
+      <button class="primary wide" id="connectBtn" style="margin-top:8px">Connect</button>
+      <div class="hint" id="connHint">
+        Connecting hardware pairs the motor first, then the sensor — two browser prompts.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Sensor inputs</h2>
+      <label class="row" id="mappingRow" style="display:none">Mapping
+        <select id="mappingSel">
+          <option value="combined">Combined (all inputs → all motors)</option>
+          <option value="independent">Independent (one input per motor)</option>
+        </select>
+      </label>
+
+      <div id="combinedInputs">
+        <div class="muted" style="font-size:12px">Tick every reading that should drive the motor:</div>
+        <div class="checks" id="featureChecks"></div>
+        <label class="row" style="margin-top:6px">Graph x-axis
+          <select id="displaySel"></select>
+        </label>
+      </div>
+
+      <div id="independentInputs" style="display:none">
+        <div class="muted" style="font-size:12px">Assign one input to each motor (any lever → any motor):</div>
+        <div id="axisFeatureRows"></div>
+      </div>
+    </div>
+
+    <div class="card" id="simCard">
+      <h2>Simulation inputs</h2>
+      <div id="simSensors"></div>
+      <div id="simMotorWrap">
+        <div class="muted" id="simMotorLabel" style="font-size:12px">Motor position (training)</div>
+        <input type="range" min="-180" max="180" value="0" id="simMotor" class="slider">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Mode <span id="modePill" class="pill train">TRAINING</span></h2>
+      <button class="wide" id="modeBtn">Switch to RUN mode</button>
+    </div>
+
+    <div class="card">
+      <h2>Training</h2>
+      <div id="combinedTraining">
+        <button class="wide primary" id="recordBtn">Record point</button>
+        <button class="wide" id="undoBtn" style="margin-top:6px">Undo last point</button>
+      </div>
+      <div id="independentTraining" style="display:none">
+        <div class="hint">Record Left and Record Right each store a point for that motor only.</div>
+        <div id="axisRecordRows"></div>
+      </div>
+      <button class="wide" id="clearBtn" style="margin-top:6px">Clear all points</button>
+      <div class="btn-row" style="margin-top:6px">
+        <button id="saveBtn">Save…</button>
+        <button id="loadBtn">Load…</button>
+        <input type="file" id="loadFile" accept="application/json" class="hidden">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Motor speed</h2>
+      <div class="hint">Set the speed (1–100%), then Record — each point remembers its own speed. In RUN mode each motor blends the speeds of nearby points.</div>
+      <div id="speedRows"></div>
+    </div>
+
+    <div class="card">
+      <h2>Live</h2>
+      <div class="readout" id="rSensor">Sensor: —</div>
+      <div class="readout" id="rMotor">Motor: —</div>
+      <div class="readout" id="rTarget">Target: —</div>
+      <div class="readout" id="rSpeed">Speed: —</div>
+      <div class="readout" id="rCount">Recorded points: 0</div>
+    </div>
+  </div>
+
+  <div class="col-graph">
+    <div class="card">
+      <h2>Sensor reading vs. Motor position</h2>
+      <canvas id="graph" width="640" height="480"></canvas>
+      <div class="hint" id="legend"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script type="py" src="./main.py"></script>
+</body>
+</html>
