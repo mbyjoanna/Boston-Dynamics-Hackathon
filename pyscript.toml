@@ -1,6 +1,0 @@
-name = "smart-motor"
-packages = [ "legoeducation" ]
-[files]
-"./Device.py" = ""
-[js_modules.main]
-"./ble.js" = "ble"
